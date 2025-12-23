@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Query by username using PDO prepared statement
+      
         $stmt = $conn->prepare("SELECT * FROM user WHERE username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
