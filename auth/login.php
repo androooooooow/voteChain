@@ -11,24 +11,24 @@ header("Pragma: no-cache");
 $msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = isset($_POST['username']) ? trim($_POST['username']) : '';
+    $username = isset($_POST['email']) ? trim($_POST['email']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
     // Hardcoded admin checks (kept as is from original)
     if ($username === 'admin' && $password === 'admin123') {
         $_SESSION['Admin'] = 'admin';
-        header('Location: /KommuteTS/src/admin.php');
+        header('Location: /VoteChain/src/admin.php');
         exit;
     } elseif ($username === 'admin2' && $password === 'admin123') {
         $_SESSION['Admin'] = 'admin';
-        header('Location: /KommuteTS/src/admin.php');
+        header('Location: /VoteChain/src/admin.php');
         exit;
     }
 
     try {
       
-        $stmt = $conn->prepare("SELECT * FROM user WHERE username = :username");
-        $stmt->bindParam(':username', $username);
+        $stmt = $conn->prepare("SELECT * FROM user WHERE email = :email");
+        $stmt->bindParam(':email', $email);
         $stmt->execute();
         
         // Check if user exists
@@ -36,17 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify hashed password
             if (password_verify($password, $row1['password'])) {
                 // Set session based on role
-                if ($row1['role'] == 'commuter') {
+                if ($row1['role'] == 'voter') {
                     $_SESSION['Commuter'] = $row1['username'];
                     $_SESSION['uid'] = $row1['uid'];
                     $_SESSION['CommuterFullname'] = $row1['fullname'];
-                    header('location:/KommuteTS/src/commuter.php');
+                    header('location:/VoteChain/src/voter_dashboard.php');
                     exit;
-                } else if ($row1['role'] == 'driver') {
+                } else if ($row1['role'] == 'candidate') {
                     $_SESSION['Driver'] = $row1['username'];
                     $_SESSION['uid'] = $row1['uid'];
                     $_SESSION['DriverFullname'] = $row1['fullname'];
-                    header('Location: /KommuteTS/src/driver.php');
+                    header('Location: /VoteChain/src/candidate_dashboard.php');
                     exit;
                 } else {
                     $msg = "Incorrect Username or Password";
@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1 class="text-2xl font-serif mb-6 text-center text-black">Log In</h1>
     <form action="login.php" method="POST" class="space-y-4">
       <div>
-        <label for="username" class="block text-sm font-sans text-black font-bold">Username</label>
-        <input type="text" id="username" name="username" required  placeholder="Enter Username: " class="mt-1 block w-full px-3 py-2 border border-black-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black font-bold">
+        <label for="email" class="block text-sm font-sans text-black font-bold">Email</label>
+        <input type="text" id="email" name="email" required  placeholder="Enter Username: " class="mt-1 block w-full px-3 py-2 border border-black-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black font-bold">
       </div>
       <div>
         <label for="password" class="block text-sm font-sans  text-black font-bold">Password</label>
